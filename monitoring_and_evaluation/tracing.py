@@ -7,6 +7,22 @@ from langchain.agents import AgentType, initialize_agent
 
 from pydantic import HttpUrl
 from urllib.parse import urlparse
+
+import os, sys
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
 
 set_environment()

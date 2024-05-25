@@ -3,6 +3,21 @@ from langchain import OpenAI, PromptTemplate
 from langchain.agents import create_pandas_dataframe_agent, AgentExecutor
 import pandas as pd
 
+import os, sys
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
 from data_science.prompts import PROMPT
 

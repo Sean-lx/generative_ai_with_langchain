@@ -9,11 +9,27 @@ from lanarky import LangchainRouter
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
+import os, sys
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
 
 set_environment()
 
 app = FastAPI()
+
 
 def create_chain():
     return ConversationChain(
@@ -40,6 +56,7 @@ langchain_router = LangchainRouter(
 langchain_router.add_langchain_api_route(
     "/chat_json", langchain_object=chain, streaming_mode=2
 )
-langchain_router.add_langchain_api_websocket_route("/ws", langchain_object=chain)
+langchain_router.add_langchain_api_websocket_route(
+    "/ws", langchain_object=chain)
 
 app.include_router(langchain_router)

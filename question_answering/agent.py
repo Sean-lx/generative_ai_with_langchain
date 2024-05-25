@@ -6,12 +6,28 @@ from langchain.chat_models import ChatOpenAI
 from langchain_experimental.plan_and_execute import (
     load_chat_planner, load_agent_executor, PlanAndExecute
 )
+import os, sys
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
 
 
 set_environment()
 
 ReasoningStrategies = Literal["zero-shot-react", "plan-and-solve"]
+
 
 def load_agent(
         tool_names: list[str],

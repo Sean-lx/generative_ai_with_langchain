@@ -3,10 +3,24 @@
 This uses Langsmith. Please create and set your LangSmith API key.
 The run_benchmark module runs against this dataset.
 """
-import os
+import os, sys
 
 from langsmith import Client
 
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
 
 set_environment()
@@ -33,7 +47,8 @@ questions = [
     # Theseus' Paradox
     "Does doing one thing really mean that a chain of increasingly negative events will follow? Why is this a problematic argument?",
     # Slippery Slope Fallacy
-    "Is a claim true because it hasn't been proven false? Why could this impede reasoning?",  # Appeal to Ignorance
+    # Appeal to Ignorance
+    "Is a claim true because it hasn't been proven false? Why could this impede reasoning?",
 ]
 
 shared_dataset_name = "Reasoning and Bias"

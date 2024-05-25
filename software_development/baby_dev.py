@@ -9,7 +9,23 @@ from langchain_experimental.plan_and_execute import (
     load_chat_planner,
 )
 
+import os, sys
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
+
 from software_development.python_developer import DEV_PROMPT, PythonDeveloper, PythonExecutorInput
 
 set_environment()

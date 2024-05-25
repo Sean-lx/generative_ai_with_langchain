@@ -1,6 +1,7 @@
 """Chat with retrieval and embeddings."""
 import logging
 import os
+import sys
 import tempfile
 
 from langchain.chains import (
@@ -19,6 +20,21 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import DocArrayInMemorySearch
 
 from chat_with_retrieval.utils import MEMORY, load_document
+
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
 
 logging.basicConfig(encoding="utf-8", level=logging.INFO)
@@ -37,7 +53,8 @@ def configure_retriever(
 ) -> BaseRetriever:
     """Retriever to use."""
     # Split each document documents:
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=200)
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1500, chunk_overlap=200)
     splits = text_splitter.split_documents(docs)
 
     # Create embeddings and store in vectordb:
@@ -110,7 +127,8 @@ def configure_retrieval_chain(
     if not use_moderation:
         return chain
 
-    input_variables = ["user_input"] if use_flare else ["chat_history", "question"]
+    input_variables = ["user_input"] if use_flare else [
+        "chat_history", "question"]
     moderation_input = "response" if use_flare else "answer"
     moderation_chain = OpenAIModerationChain(input_key=moderation_input)
     return SequentialChain(

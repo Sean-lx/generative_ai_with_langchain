@@ -3,13 +3,27 @@
 This uses Langsmith. Please set your LangSmith API key. See
 create_benchmark to create the benchmark dataset.
 """
-import os
+import os, sys
 
 from langchain import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith import Client
 
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
 
 set_environment()
@@ -34,7 +48,8 @@ evaluation_config = RunEvalConfig(
     evaluators=[
         # Arbitrary criterion as a key: value pair in the criteria dict:
         RunEvalConfig.Criteria({"helpfulness": "Is the response helpful?"}),
-        RunEvalConfig.Criteria({"insightful": "Is the response carefully thought out?"})
+        RunEvalConfig.Criteria(
+            {"insightful": "Is the response carefully thought out?"})
     ]
 )
 

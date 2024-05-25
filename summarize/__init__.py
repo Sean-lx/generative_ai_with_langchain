@@ -4,20 +4,39 @@ Given any pdf file or directory with pdf files,
 create a summary and save it as a .txt file.
 """
 import logging
+import sys
 import os
+
 from pathlib import Path
 
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
-from langchain.callbacks import get_openai_callback
+from langchain_openai import ChatOpenAI
+from langchain_community.callbacks.manager import get_openai_callback
 from langchain.chains.summarize import load_summarize_chain
-from langchain.chat_models import ChatOpenAI
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.llms import Ollama
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.schema import Document
 
-from config import set_environment
-from summarize import prompts
+import prompts
 
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
+from config import set_environment
+
+# set environment variables
 set_environment()
 
 CHAT = ChatOpenAI(
@@ -59,8 +78,10 @@ def summarize_docs(
     chain = load_summarize_chain(
         CHAT,
         chain_type="map_reduce",
-        map_prompt=PromptTemplate(input_variables=["text"], template=prompts.SUMMARY),
-        combine_prompt=PromptTemplate(input_variables=["text"], template=prompts.HIGH_LEVEL),
+        map_prompt=PromptTemplate(
+            input_variables=["text"], template=prompts.SUMMARY),
+        combine_prompt=PromptTemplate(
+            input_variables=["text"], template=prompts.HIGH_LEVEL),
         return_map_steps=True
     )
     summary = chain({"input_documents": docs})
@@ -118,6 +139,5 @@ def create_pdf_summaries(directory: str):
 
 
 if __name__ == "__main__":
-    directory = "/Users/ben/Downloads/"
+    directory = "/Users/sean/Downloads/pdfs"
     create_pdf_summaries(directory=directory)
-

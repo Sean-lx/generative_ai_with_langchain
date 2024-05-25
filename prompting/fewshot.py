@@ -4,6 +4,21 @@ from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
 from langchain.chat_models import ChatOpenAI
 from langchain.vectorstores import Chroma
 
+import os, sys
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
 
 set_environment()
@@ -17,10 +32,10 @@ example_prompt = PromptTemplate(
 examples = [{
     "input": "I absolutely love the new update! Everything works seamlessly.",
     "output": "Positive",
-    },{
+}, {
     "input": "It's okay, but I think it could use more features.",
     "output": "Neutral",
-    }, {
+}, {
     "input": "I'm disappointed with the service, I expected much better performance.",
     "output": "Negative"
 }]
@@ -31,7 +46,8 @@ prompt = FewShotPromptTemplate(
     suffix="Question: {input}",
     input_variables=["input"]
 )
-print((prompt | model).invoke({"input": "This is an excellent book with high quality explanations."}))
+print((prompt | model).invoke(
+    {"input": "This is an excellent book with high quality explanations."}))
 
 selector = SemanticSimilarityExampleSelector.from_examples(
     examples=examples,

@@ -3,6 +3,22 @@
 by calculating the embedding distance to an expected output (a reference).
 """
 from langchain.evaluation import load_evaluator, EvaluatorType, PairwiseStringEvalChain
+
+import os, sys
+# getting the name of the directory
+# where the this file is present.
+current = os.path.dirname(os.path.realpath(__file__))
+
+# Getting the parent directory name
+# where the current directory is present.
+parent = os.path.dirname(current)
+
+# adding the parent directory to
+# the sys.path.
+sys.path.append(parent)
+
+# now we can import the module in the parent
+# directory.
 from config import set_environment
 
 set_environment()
@@ -27,7 +43,8 @@ custom_criteria = {
     "truthfulness": "Does the writing feel honest and sincere?",
     "subtext": "Does the writing suggest deeper meanings or themes?",
 }
-evaluator = load_evaluator(EvaluatorType.PAIRWISE_STRING, criteria=custom_criteria)
+evaluator = load_evaluator(
+    EvaluatorType.PAIRWISE_STRING, criteria=custom_criteria)
 
 assert isinstance(evaluator, PairwiseStringEvalChain)
 print(evaluator.evaluate_string_pairs(
@@ -41,4 +58,3 @@ print(evaluator.evaluate_string_pairs(
 
 if __name__ == "__main__":
     pass
-
