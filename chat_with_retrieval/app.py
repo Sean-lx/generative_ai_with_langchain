@@ -8,8 +8,8 @@ import logging
 import streamlit as st
 from streamlit.external.langchain import StreamlitCallbackHandler
 
-from chat_with_retrieval.chat_with_documents import configure_retrieval_chain
-from chat_with_retrieval.utils import MEMORY, DocumentLoader
+from chat_with_documents import configure_retrieval_chain
+from utils import MEMORY, DocumentLoader
 
 logging.basicConfig(encoding="utf-8", level=logging.INFO)
 LOGGER = logging.getLogger()

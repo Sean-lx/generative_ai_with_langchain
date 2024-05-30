@@ -11,15 +11,15 @@ from langchain.chains import (
     SequentialChain,
 )
 from langchain.chains.base import Chain
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAIEmbeddings
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import EmbeddingsFilter
 from langchain.schema import BaseRetriever, Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import DocArrayInMemorySearch
+from langchain_community.vectorstores import DocArrayInMemorySearch
 
-from chat_with_retrieval.utils import MEMORY, load_document
+from utils import MEMORY, load_document
 
 # getting the name of the directory
 # where the this file is present.

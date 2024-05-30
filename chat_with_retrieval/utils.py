@@ -7,7 +7,7 @@ import logging
 import pathlib
 from typing import Any
 
-from langchain.document_loaders import (
+from langchain_community.document_loaders import (
     PyPDFLoader,
     TextLoader,
     UnstructuredEPubLoader,
