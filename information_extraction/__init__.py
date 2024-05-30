@@ -4,10 +4,11 @@ The example CV is from https://github.com/xitanggg/open-resume.
 """
 from typing import Optional
 
+from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains import create_extraction_chain_pydantic
-from langchain.chat_models import ChatOpenAI
-from langchain.document_loaders import PyPDFLoader
-from pydantic import BaseModel, Field
+from langchain_openai import ChatOpenAI
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 import os, sys
 # getting the name of the directory
@@ -85,15 +86,36 @@ def parse_cv(pdf_file_path: str) -> str:
     """Parse a resume.
     Not totally sure about the return type: is it list[Resume]?
     """
+
+    # Define a custom prompt to provide instructions and any additional context.
+    # 1) You can add examples into the prompt template to improve extraction quality
+    # 2) Introduce additional parameters to take context into account (e.g., include metadata
+    # about the document from which the text was extracted.)
+    prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "You are an expert extraction algorithm. "
+            "Only extract relevant information from the text. "
+            "If you do not know the value of an attribute asked to extract, "
+            "return null for the attribute's value.",
+        ),
+        # Please see the how-to about improving performance with
+        # reference examples.
+        # MessagesPlaceholder('examples'),
+        ("human", "{text}"),
+    ]
+)
     pdf_loader = PyPDFLoader(pdf_file_path)
     docs = pdf_loader.load_and_split()
     # please note that function calling is not enabled for all models!
     llm = ChatOpenAI(model_name="gpt-3.5-turbo")
-    chain = create_extraction_chain_pydantic(pydantic_schema=Resume, llm=llm)
-    return chain.run(docs)
+    runnable = prompt | llm.with_structured_output(schema=Resume)
+    
+    return runnable.invoke({"text": docs})
 
 
 if __name__ == "__main__":
     print(parse_cv(
-        pdf_file_path="openresume-resume.pdf"
+        pdf_file_path = current + "/" + "openresume-resume.pdf"
     ))
