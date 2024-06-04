@@ -5,8 +5,8 @@ create_benchmark to create the benchmark dataset.
 """
 import os, sys
 
-from langchain import LLMChain
-from langchain.chat_models import ChatOpenAI
+from langchain.chains import LLMChain
+from langchain_openai import ChatOpenAI
 from langchain.smith import RunEvalConfig, run_on_dataset
 from langsmith import Client
 
@@ -29,11 +29,13 @@ from config import set_environment
 set_environment()
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "My Project"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_API_KEY"] = "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"
 
 client = Client()
 shared_dataset_name = "Reasoning and Bias"
 
-llm = ChatOpenAI(model="gpt-4", temperature=0.0)
+llm = ChatOpenAI(model="gpt-4o", temperature=0.0)
 
 
 # Use constructor function to initialize for each input:

@@ -1,5 +1,6 @@
 """Prompt tracking with PromptWatch.io."""
-from langchain import LLMChain, OpenAI, PromptTemplate
+from langchain_openai import OpenAI
+from langchain_core.prompts import PromptTemplate
 from promptwatch import PromptWatch
 
 import os, sys
@@ -21,11 +22,14 @@ from config import set_environment
 
 set_environment()
 
+os.environ['PROMPTWATCH_API_KEY'] = 'N3dyYUVxRjJGeFhlU0tsS2ZES2pmNWxZUnV3MjphNzBmMmYzOC0yYjFlLTUxMTQtOTVmOC1hMjQzNDRlOGFkOTU='
+
 prompt_template = PromptTemplate.from_template("Finish this sentence {input}")
-my_chain = LLMChain(llm=OpenAI(), prompt=prompt_template)
+llm = OpenAI()
+runnable = prompt_template | llm
 
 with PromptWatch() as pw:
-    my_chain("The quick brown fox jumped over")
+    runnable.invoke({"input": "The quick brown rabbit jumped over"})
 
 if __name__ == "__main__":
     pass

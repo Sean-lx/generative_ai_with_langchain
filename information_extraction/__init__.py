@@ -5,7 +5,6 @@ The example CV is from https://github.com/xitanggg/open-resume.
 from typing import Optional
 
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.chains import create_extraction_chain_pydantic
 from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_core.pydantic_v1 import BaseModel, Field

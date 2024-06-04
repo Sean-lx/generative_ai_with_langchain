@@ -1,11 +1,12 @@
 """Tracing of agent calls and intermediate results."""
 import subprocess
 
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.tools import StructuredTool
-from langchain.agents import AgentType, initialize_agent
+from langchain.agents import initialize_agent, AgentType, create_openai_functions_agent, AgentExecutor
 
-from pydantic import HttpUrl
+from langchain.pydantic_v1 import BaseModel, Field
 from urllib.parse import urlparse
 
 import os, sys
@@ -27,10 +28,13 @@ from config import set_environment
 
 set_environment()
 
+class PingInput(BaseModel):
+    url: str = Field(description="url to ping")
+    return_error: bool = Field(description="return error if ping fails")
 
-def ping(url: HttpUrl, return_error: bool) -> str:
+def ping(url: str, return_error: bool = False) -> str:
     """Ping the fully specified url. Must include https:// in the url."""
-    hostname = urlparse(str(url)).netloc
+    hostname = urlparse(url).netloc
     completed_process = subprocess.run(
         ["ping", "-c", "1", hostname], capture_output=True, text=True
     )
@@ -40,20 +44,33 @@ def ping(url: HttpUrl, return_error: bool) -> str:
     return output
 
 
-# alternatively annotate the ping() function with @tool
-ping_tool = StructuredTool.from_function(ping)
+ping_tool = StructuredTool.from_function(
+    func=ping, 
+    name="ping",
+    args_schema=PingInput,
+    )
 
 
 llm = ChatOpenAI(model="gpt-3.5-turbo-0613", temperature=0)
-agent = initialize_agent(
+tools = [ping_tool]
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are a helpful assistant. Answer all questions to the best of your ability."),
+        ("user", "{input}"),
+        MessagesPlaceholder(variable_name="agent_scratchpad"),
+    ]
+)
+agent = create_openai_functions_agent(
     llm=llm,
-    tools=[ping_tool],
-    agent=AgentType.OPENAI_MULTI_FUNCTIONS,
-    return_intermediate_steps=True,  # IMPORTANT!
+    tools=tools,
+    prompt=prompt,
 )
 
-result = agent("What's the latency like for https://langchain.com?")
+agent_executor = AgentExecutor.from_agent_and_tools(agent=agent, tools=tools, verbose=True)
+result = agent_executor.invoke({"input": "What's the latency like for https://langchain.com ?",
+                                "agent_scratchpad": "Use the ping tool to ping https://langchain.com"})
 print(result)
+
 
 if __name__ == "__main__":
     pass

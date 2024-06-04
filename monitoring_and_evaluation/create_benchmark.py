@@ -26,6 +26,8 @@ from config import set_environment
 set_environment()
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "My Project"
+os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
+os.environ["LANGCHAIN_API_KEY"] = "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"
 
 client = Client()
 questions = [
