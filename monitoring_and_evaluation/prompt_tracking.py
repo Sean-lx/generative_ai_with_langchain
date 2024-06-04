@@ -22,7 +22,6 @@ from config import set_environment
 
 set_environment()
 
-os.environ['PROMPTWATCH_API_KEY'] = 'N3dyYUVxRjJGeFhlU0tsS2ZES2pmNWxZUnV3MjphNzBmMmYzOC0yYjFlLTUxMTQtOTVmOC1hMjQzNDRlOGFkOTU='
 
 prompt_template = PromptTemplate.from_template("Finish this sentence {input}")
 llm = OpenAI()

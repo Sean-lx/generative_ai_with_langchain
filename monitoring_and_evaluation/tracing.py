@@ -4,7 +4,7 @@ import subprocess
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.tools import StructuredTool
-from langchain.agents import initialize_agent, AgentType, create_openai_functions_agent, AgentExecutor
+from langchain.agents import create_openai_functions_agent, AgentExecutor
 
 from langchain.pydantic_v1 import BaseModel, Field
 from urllib.parse import urlparse
